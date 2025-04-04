@@ -1,0 +1,15 @@
+server:
+  retention: 1d
+  scrape_interval: 1s
+  evaluation_interval: 1s
+  resources:
+    limits:
+      memory: 1Gi
+      cpu: 500m
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  persistentVolume:
+    enabled: false
+alertmanager:
+  enabled: false

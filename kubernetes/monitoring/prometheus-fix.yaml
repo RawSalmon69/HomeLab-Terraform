@@ -1,0 +1,47 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-kube-prometheus-prometheus
+  namespace: monitoring
+  labels:
+    app: kube-prometheus-stack-prometheus
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 70.4.1
+    chart: kube-prometheus-stack-70.4.1
+    heritage: Helm
+    release: prometheus
+spec:
+  replicas: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 200m
+      memory: 512Mi
+  retention: 3d
+  scrapeInterval: 30s
+  evaluationInterval: 30s
+  serviceMonitorSelector: {}
+  serviceMonitorNamespaceSelector: {}
+  podMonitorSelector:
+    matchLabels:
+      release: prometheus
+  podMonitorNamespaceSelector: {}
+  probeSelector:
+    matchLabels:
+      release: prometheus
+  probeNamespaceSelector: {}
+  ruleSelector:
+    matchLabels:
+      release: prometheus
+  ruleNamespaceSelector: {}
+  alerting:
+    alertmanagers:
+    - apiVersion: v2
+      name: prometheus-kube-prometheus-alertmanager
+      namespace: monitoring
+      pathPrefix: /
+      port: http-web

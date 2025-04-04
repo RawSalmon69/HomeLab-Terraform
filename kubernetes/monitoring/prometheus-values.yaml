@@ -1,126 +1,40 @@
-# Global settings
-nameOverride: ""
-namespaceOverride: "monitoring"
-fullnameOverride: ""
-
-# Prometheus Operator configuration
-prometheusOperator:
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 50m
-      memory: 64Mi
-
-# Prometheus server configuration
 prometheus:
   prometheusSpec:
-    retention: 7d
+    replicas: 1
+    retention: 1d
     resources:
-      requests:
-        memory: 512Mi
-        cpu: 200m
       limits:
-        memory: 1Gi
         cpu: 500m
-    # Storage configuration
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: local-path
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 10Gi
-    # Only scrape k8s components - reduces resource usage
-    serviceMonitorSelectorNilUsesHelmValues: false
-    serviceMonitorSelector: {}
-    serviceMonitorNamespaceSelector: {}
+        memory: 2Gi
+      requests:
+        cpu: 200m
+        memory: 512Mi
+    storageSpec: {}  # No persistent storage, uses emptyDir
+    scrapeInterval: 5s
+    evaluationInterval: 5s
 
-# Alertmanager configuration
 alertmanager:
   alertmanagerSpec:
-    # Resource limits suitable for homelab
+    replicas: 1
+    retention: 24h
     resources:
-      requests:
-        memory: 64Mi
-        cpu: 50m
       limits:
-        memory: 128Mi
+        cpu: 200m
+        memory: 256Mi
+      requests:
         cpu: 100m
-    storage:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: local-path
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 1Gi
+        memory: 128Mi
+    storage: {}  # No persistent storage, uses emptyDir
 
-# Grafana configuration
 grafana:
-  # Service type - ClusterIP works with Ingress
-  service:
-    type: ClusterIP
-  # Admin password - change this for production
-  adminPassword: "admin"
-  # Persistence for Grafana data
+  adminPassword: "admin" # Setting a known password
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
   persistence:
     enabled: true
-    size: 2Gi
-    storageClassName: local-path
-  # Resource limits suitable for homelab
-  resources:
-    limits:
-      cpu: 150m
-      memory: 256Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  # Default dashboards
-  defaultDashboardsEnabled: true
-  # Disable some features to save resources
-  grafana.ini:
-    server:
-      domain: grafana.rawsalmon.internal
-    analytics:
-      reporting_enabled: false
-      check_for_updates: false
-
-# Node exporter configuration
-nodeExporter:
-  resources:
-    limits:
-      cpu: 100m
-      memory: 64Mi
-    requests:
-      cpu: 50m
-      memory: 32Mi
-
-# kube-state-metrics configuration
-kubeStateMetrics:
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 50m
-      memory: 64Mi
-
-kubeApiServer:
-  enabled: true
-kubelet:
-  enabled: true
-kubeControllerManager:
-  enabled: false
-coreDns:
-  enabled: true
-kubeDns:
-  enabled: false
-kubeEtcd:
-  enabled: false
-kubeScheduler:
-  enabled: false
-kubeProxy:
-  enabled: false
+    size: 1Gi
