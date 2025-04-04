@@ -4,9 +4,22 @@ variable "proxmox_password" {
   sensitive   = true
 }
 
+variable "proxmox_api_url" {
+  description = "Proxmox API URL"
+  type        = string
+  default     = "https://192.168.1.200:8006/api2/json"
+}
+
 variable "ssh_key" {
   description = "Your public SSH key for VM access"
   type        = string
+}
+
+variable "vm_password" {
+  description = "Password for VM user"
+  type        = string
+  sensitive   = true
+  default     = "ubuntu"  # Default password, should be changed in production
 }
 
 variable "proxmox_node" {

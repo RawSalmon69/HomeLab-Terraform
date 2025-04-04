@@ -27,3 +27,10 @@ variable "vm_network" {
     worker_ips = list(string)
   })
 }
+
+variable "vm_password" {
+  description = "Password for VM user"
+  type        = string
+  sensitive   = true
+  default     = "ubuntu"  # Default password, should be changed in production
+}

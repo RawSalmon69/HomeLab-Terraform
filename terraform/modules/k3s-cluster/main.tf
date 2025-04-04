@@ -15,37 +15,37 @@ resource "proxmox_vm_qemu" "k3s_master" {
   
   # Clone from the template
   clone       = var.template_name
-  full_clone  = true  # Full clone to avoid template modification
+  full_clone  = true
   
   # Compute resources
   cores       = 2
   sockets     = 1
   memory      = 4096
   
-  # Disk configuration - using ZFS storage
-#   disk {
-#     type    = "scsi"
-#     storage = "local-zfs"
-#     size    = "80G"
-#     slot    = 0    
-#     file    = "vm-${self.vmid}-disk-0"
-#   }
-
   # Network configuration
   network {
     model  = "virtio"
     bridge = "vmbr0"
   }
   
-  # IP configuration
+  # Cloud-init specific settings
+  os_type    = "cloud-init"
   ipconfig0  = "ip=${var.vm_network.master_ip}/${var.vm_network.subnet_mask},gw=${var.vm_network.gateway}"
+  nameserver = "1.1.1.1 8.8.8.8"
+  searchdomain = "local"
   
-  # Cloud-init config
-  sshkeys    = var.ssh_key
+  # Set specific hostname for master
   ciuser     = "ubuntu"
+  cipassword = var.vm_password # Need to add this to variables
+  sshkeys    = var.ssh_key
   
-  # Enable QEMU agent
+  # Adding these cloud-init parameters to force static IP
+  # This is critical for ensuring network settings are applied
+  ci_wait    = 300  # Wait longer for cloud-init to complete
+  
+  # Additional settings to ensure proper initialization
   agent      = 1
+  onboot     = true
   
   # Start on creation
   vm_state = "running"
@@ -68,31 +68,30 @@ resource "proxmox_vm_qemu" "k3s_worker" {
   sockets     = 1
   memory      = 4096
   
-#   # Disk configuration
-#   disk {
-#     type    = "scsi"
-#     storage = "local-zfs"
-#     size    = "80G"
-#     slot    = 0    
-#     file    = "vm-${self.vmid}-disk-0" 
-#   }
-  
   # Network configuration
   network {
     model  = "virtio"
     bridge = "vmbr0"
   }
   
-  # IP configuration 
+  # Cloud-init specific settings
+  os_type    = "cloud-init"
   ipconfig0  = "ip=${var.vm_network.worker_ips[count.index]}/${var.vm_network.subnet_mask},gw=${var.vm_network.gateway}"
+  nameserver = "1.1.1.1 8.8.8.8"
+  searchdomain = "local"
   
-  # Cloud-init config
-  sshkeys    = var.ssh_key
+  # Set specific hostname for each worker
   ciuser     = "ubuntu"
+  cipassword = var.vm_password
+  sshkeys    = var.ssh_key
   
-  # Enable QEMU agent
+  # Adding these cloud-init parameters to force static IP
+  ci_wait    = 300  # Wait longer for cloud-init to complete
+  
+  # Additional settings to ensure proper initialization
   agent      = 1
+  onboot     = true
   
   # Start on creation
-vm_state = "running"
+  vm_state = "running"
 }

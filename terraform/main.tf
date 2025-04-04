@@ -6,6 +6,7 @@ module "k3s_cluster" {
   template_vmid  = var.template_vmid
   ssh_key        = var.ssh_key
   vm_network     = var.vm_network
+  vm_password    = var.vm_password
   
   providers = {
     proxmox = proxmox
