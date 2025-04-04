@@ -1,0 +1,18 @@
+controller:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  config:
+    proxy-body-size: "50m"
+    proxy-read-timeout: "300"
+    proxy-send-timeout: "300"
+  metrics:
+    enabled: true
+    service:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10254"
