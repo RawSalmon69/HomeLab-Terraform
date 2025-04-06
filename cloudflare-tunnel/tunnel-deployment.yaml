@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudflared
+  namespace: cloudflared
+spec:
+  selector:
+    matchLabels:
+      app: cloudflared
+  replicas: 1  # Reduced to single replica for troubleshooting
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+    spec:
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:latest
+        args:
+        - tunnel
+        - --loglevel
+        - debug  # Enable debug logging
+        - --config
+        - /etc/cloudflared/config/config.yaml
+        - run
+        env:
+        - name: NO_AUTOUPDATE
+          value: "true"
+        - name: TUNNEL_TRANSPORT_PROTOCOL
+          value: "http2"  # Try http2 instead of QUIC
+        livenessProbe:
+          httpGet:
+            path: /ready
+            port: 2000
+          failureThreshold: 3
+          initialDelaySeconds: 30  # Increased delay
+          periodSeconds: 30  # Increased period
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 2000
+          failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        volumeMounts:
+        - name: config
+          mountPath: /etc/cloudflared/config
+          readOnly: true
+        - name: creds
+          mountPath: /etc/cloudflared/credentials
+          readOnly: true
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+      - name: config
+        configMap:
+          name: cloudflare-tunnel-config
+      - name: creds
+        secret:
+          secretName: cloudflare-tunnel-credentials
