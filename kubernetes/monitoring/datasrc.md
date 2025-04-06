@@ -11,3 +11,6 @@ kubectl apply -f prometheus-config.yaml
 Go to "+" > Import
 Enter dashboard ID 15757 (for K3s) or 315 (for Kubernetes)
 Select your Prometheus data source and click "Import"
+
+kubectl patch svc portfolio -n portfolio-service -p '{"spec":{"type":"NodePort","ports":[{"port":80,"nodePort":30080}]}}'
+kubectl get svc -n portfolio-service

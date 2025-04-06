@@ -36,3 +36,5 @@ override.tf.json
 .terraformrc
 terraform.rc
 terraform/.terraform.lock.hcl
+kubernetes/portfolio/cloudflare-ddns.sh
+kubectl
