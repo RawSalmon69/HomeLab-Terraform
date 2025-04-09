@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  namespace: networking
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      containers:
+      - name: pihole
+        image: pihole/pihole:2024.02.2
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: TZ
+          valueFrom:
+            configMapKeyRef:
+              name: pihole-config
+              key: TZ
+        - name: DNS1
+          valueFrom:
+            configMapKeyRef:
+              name: pihole-config
+              key: DNS1
+        - name: DNS2
+          valueFrom:
+            configMapKeyRef:
+              name: pihole-config
+              key: DNS2
+        - name: WEBPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: pihole-password
+              key: WEBPASSWORD
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP
+        - containerPort: 53
+          name: dns-tcp
+          protocol: TCP
+        - containerPort: 53
+          name: dns-udp
+          protocol: UDP
+        - containerPort: 67
+          name: dhcp
+          protocol: UDP
+        volumeMounts:
+        - name: pihole-data
+          mountPath: /etc/pihole
+        - name: dnsmasq-data
+          mountPath: /etc/dnsmasq.d
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      volumes:
+      - name: pihole-data
+        persistentVolumeClaim:
+          claimName: pihole-data
+      - name: dnsmasq-data
+        persistentVolumeClaim:
+          claimName: dnsmasq-data

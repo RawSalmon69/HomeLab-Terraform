@@ -1,0 +1,121 @@
+   ClaimName:  dnsmasq-data
+
+    ReadOnly:   false
+
+  kube-api-access-pfsjs:
+
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+
+    TokenExpirationSeconds:  3607
+
+    ConfigMapName:           kube-root-ca.crt
+
+    ConfigMapOptional:       <nil>
+
+    DownwardAPI:             true
+
+QoS Class:                   Burstable
+
+Node-Selectors:              <none>
+
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+
+Events:
+
+  Type     Reason     Age                From               Message
+
+  ----     ------     ----               ----               -------
+
+  Normal   Scheduled  53s                default-scheduler  Successfully assigned networking/pihole-8658c4bf8f-4kr5n to ubuntu
+
+  Normal   BackOff    19s (x2 over 48s)  kubelet            Back-off pulling image "pihole/pihole:2024.02.2"
+
+  Warning  Failed     19s (x2 over 48s)  kubelet            Error: ImagePullBackOff
+
+  Normal   Pulling    5s (x3 over 53s)   kubelet            Pulling image "pihole/pihole:2024.02.2"
+
+  Warning  Failed     0s (x3 over 48s)   kubelet            Failed to pull image "pihole/pihole:2024.02.2": failed to pull and unpack image "docker.io/pihole/pihole:2024.02.2": failed to resolve reference "docker.io/pihole/pihole:2024.02.2": failed to do request: Head "https://registry-1.docker.io/v2/pihole/pihole/manifests/2024.02.2": dial tcp: lookup registry-1.docker.io: Try again
+
+  Warning  Failed     0s (x3 over 48s)   kubelet            Error: ErrImagePull
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ───────────────────────────────────────────────────────────────────────────────────── 47s  󱃾 k3s-tailscale  00:55:22 
+
+╰─❯ ssh ubuntu@100.80.105.125 "curl -v https://registry-1.docker.io/v2/"
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0* Could not resolve host: registry-1.docker.io
+
+* Closing connection
+
+curl: (6) Could not resolve host: registry-1.docker.io
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ────────────────────────────────────────────────────────────────────────────────────── 6s  󱃾 k3s-tailscale  00:55:41 
+
+╰─❯ kubectl run nginx-test --image=nginx:alpine -n networking
+
+    kubectl get pods -n networking
+
+pod/nginx-test created
+
+NAME                      READY   STATUS              RESTARTS   AGE
+
+nginx-test                0/1     ContainerCreating   0          1s
+
+pihole-8658c4bf8f-4kr5n   0/1     ImagePullBackOff    0          89s
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ─────────────────────────────────────────────────────────────────────────────────────────── 󱃾 k3s-tailscale  00:55:57 
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ─────────────────────────────────────────────────────────────────────────────────────────── 󱃾 k3s-tailscale  00:55:57 
+
+╰─❯ kubectl get pods -n networking
+
+NAME                      READY   STATUS             RESTARTS   AGE
+
+nginx-test                0/1     ErrImagePull       0          21s
+
+pihole-8658c4bf8f-4kr5n   0/1     ImagePullBackOff   0          109s
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ─────────────────────────────────────────────────────────────────────────────────────────── 󱃾 k3s-tailscale  00:56:17 
+
+╰─❯ ssh ubuntu@100.80.105.125 "ping -c 3 8.8.8.8"
+
+    ssh ubuntu@100.80.105.125 "curl -v https://www.google.com"
+
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=244 time=30.2 ms
+
+64 bytes from 8.8.8.8: icmp_seq=2 ttl=244 time=32.7 ms
+
+64 bytes from 8.8.8.8: icmp_seq=3 ttl=244 time=28.2 ms
+
+--- 8.8.8.8 ping statistics ---
+
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+
+rtt min/avg/max/mdev = 28.214/30.371/32.727/1.847 ms
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:--  0:00:04 --:--:--     0* Could not resolve host: www.google.com
+
+* Closing connection
+
+curl: (6) Could not resolve host: www.google.com
+
+ ~/Documents/Github/HomeLab-Terraform/kubernetes/pihole  main ?1 ────────────────────────────────────────────────────────────────────────────────────── 8s  󱃾 k3s-tailscale  00:56:39 
+
+╰─❯ ssh ubuntu@100.80.105.125 "sudo systemctl status containerd"
+
+Unit containerd.service could not be found.
+
+╭─ ~/Documents/Github/HomeLab-Terraform/kubern
+
+ping works but curl doesnt

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-config
+  namespace: networking
+data:
+  TZ: "Asia/Bangkok"  # Change to your timezone
+  ServerIP: ""  # Will be automatically assigned
+  WEBPASSWORD: ""  # Will be set from secret
+  DNS1: "1.1.1.1"  # Cloudflare DNS
+  DNS2: "8.8.8.8"  # Google DNS
