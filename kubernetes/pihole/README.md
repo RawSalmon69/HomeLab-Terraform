@@ -1,53 +1,61 @@
-# Pi-hole Network-Wide Ad Blocking
+# Pi-hole for Kubernetes
 
-This directory contains Kubernetes manifests to deploy Pi-hole in your K3s cluster, providing network-wide ad blocking functionality.
+This directory contains Kubernetes manifests to deploy Pi-hole, a network-wide ad blocker.
 
-## Prerequisites
+## Features
 
-- Running K3s cluster
-- kubectl configured to talk to your cluster
-- Persistent storage support in your cluster
+- DNS-level ad blocking for your entire network
+- Web interface for monitoring and configuration
+- Works with Tailscale for remote ad blocking (optional)
 
-## Getting Started
+## Deployment
 
-1. Make the scripts executable:
-   ```bash
-   chmod +x deploy.sh tailscale.sh
+1. Make the deployment script executable:
+   ```
+   chmod +x deploy.sh
    ```
 
-2. Review and update the configuration files:
-   - Update the timezone in `configmap.yaml`
-   - Set a secure password in `secret.yaml`
-   - Adjust the ingress host in `ingress.yaml`
-
-3. Deploy Pi-hole:
-   ```bash
+2. Run the deployment script:
+   ```
    ./deploy.sh
    ```
 
-4. Configure Tailscale (optional):
-   ```bash
-   ./tailscale.sh
-   ```
+3. Access the Pi-hole web interface:
+   - Via LoadBalancer IP: `http://<LOADBALANCER_IP>/admin`
+   - Via Ingress (if configured): `http://pihole.local/admin`
+
+4. Login with the default password: `pihole`
+   - You should change this in `configmap.yaml` before deployment
+
+## Configuration
+
+Edit `configmap.yaml` to customize:
+- Timezone
+- Web interface password
+- Upstream DNS servers
 
 ## Files
 
-- `namespace.yaml` - Creates the networking namespace
-- `configmap.yaml` - Pi-hole configuration
-- `secret.yaml` - Contains the web admin password
-- `pvc.yaml` - Persistent volume claims for Pi-hole data
-- `deployment.yaml` - Pi-hole deployment specification
-- `services.yaml` - Services to expose Pi-hole DNS and web interface
-- `ingress.yaml` - Ingress for accessing web interface
-- `deploy.sh` - Deployment script
-- `tailscale.sh` - Script to configure Tailscale for remote ad blocking
+- `namespace.yaml`: Creates the networking namespace
+- `configmap.yaml`: Pi-hole configuration
+- `deployment.yaml`: Pi-hole deployment
+- `services.yaml`: Services for DNS and web interface
+- `ingress.yaml`: Ingress for accessing the web interface
+- `deploy.sh`: Deployment script
 
-## Using Pi-hole
+## Network-Wide Setup
 
-- Web interface: Access via the LoadBalancer IP or Ingress hostname
-- Configure your router to use Pi-hole as the DNS server
-- For remote usage, configure Tailscale to use Pi-hole as DNS
+To use Pi-hole for your entire network, configure your router to use the Pi-hole's IP address as its primary DNS server.
 
-## Ad Blocking Everywhere
+## Remote Access with Tailscale
 
-With Tailscale configured, you can enjoy ad-free browsing on all your devices, even when on mobile data or other networks.
+To access Pi-hole's ad blocking when away from home:
+
+1. On your cluster node:
+   ```
+   sudo tailscale up --advertise-routes=<PIHOLE_IP>/32 --accept-dns=false
+   ```
+
+2. In Tailscale admin console:
+   - Enable subnet routes for your node
+   - Configure DNS settings to use Pi-hole

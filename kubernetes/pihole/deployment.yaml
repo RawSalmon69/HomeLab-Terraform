@@ -1,3 +1,4 @@
+# Basic Pi-hole deployment without persistent storage
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,14 +16,27 @@ spec:
     spec:
       containers:
       - name: pihole
-        image: pihole/pihole:2024.02.2
-        imagePullPolicy: IfNotPresent
+        # Using an older version tag that should be more stable
+        image: pihole/pihole:2023.11.0
+        # Add resource limits to ensure stability
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
         env:
         - name: TZ
           valueFrom:
             configMapKeyRef:
               name: pihole-config
               key: TZ
+        - name: WEBPASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: pihole-config
+              key: WEBPASSWORD
         - name: DNS1
           valueFrom:
             configMapKeyRef:
@@ -33,11 +47,16 @@ spec:
             configMapKeyRef:
               name: pihole-config
               key: DNS2
-        - name: WEBPASSWORD
+        - name: ServerIP
           valueFrom:
-            secretKeyRef:
-              name: pihole-password
-              key: WEBPASSWORD
+            configMapKeyRef:
+              name: pihole-config
+              key: ServerIP
+        - name: DHCP_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: pihole-config
+              key: DHCP_ACTIVE
         ports:
         - containerPort: 80
           name: http
@@ -48,25 +67,3 @@ spec:
         - containerPort: 53
           name: dns-udp
           protocol: UDP
-        - containerPort: 67
-          name: dhcp
-          protocol: UDP
-        volumeMounts:
-        - name: pihole-data
-          mountPath: /etc/pihole
-        - name: dnsmasq-data
-          mountPath: /etc/dnsmasq.d
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "256Mi"
-            cpu: "200m"
-      volumes:
-      - name: pihole-data
-        persistentVolumeClaim:
-          claimName: pihole-data
-      - name: dnsmasq-data
-        persistentVolumeClaim:
-          claimName: dnsmasq-data

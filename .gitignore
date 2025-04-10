@@ -38,3 +38,4 @@ terraform.rc
 terraform/.terraform.lock.hcl
 kubernetes/portfolio/cloudflare-ddns.sh
 kubectl
+unused/secret.yaml

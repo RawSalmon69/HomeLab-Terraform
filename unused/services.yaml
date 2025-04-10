@@ -1,29 +1,20 @@
-# Services to expose Pi-hole DNS and web interface
-# DNS service with LoadBalancer for network-wide access
 apiVersion: v1
 kind: Service
 metadata:
   name: pihole-dns
   namespace: networking
-  annotations:
-    # Add annotations to ensure all protocol ports are exposed correctly
-    metallb.universe.tf/allow-shared-ip: pihole
 spec:
   selector:
     app: pihole
   ports:
   - name: dns-tcp
     port: 53
-    targetPort: 53
     protocol: TCP
   - name: dns-udp
     port: 53
-    targetPort: 53
     protocol: UDP
   type: LoadBalancer
-
 ---
-# Web interface service with ClusterIP for ingress access
 apiVersion: v1
 kind: Service
 metadata:
@@ -33,8 +24,6 @@ spec:
   selector:
     app: pihole
   ports:
-  - name: http
-    port: 80
+  - port: 80
     targetPort: 80
-    protocol: TCP
   type: ClusterIP

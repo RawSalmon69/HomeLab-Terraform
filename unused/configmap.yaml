@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-config
+  namespace: networking
+data:
+  TZ: "Asia/Bangkok"
+  WEBPASSWORD: "pihole"  # Change this to a secure password

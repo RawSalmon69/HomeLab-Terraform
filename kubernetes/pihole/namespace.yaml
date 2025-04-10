@@ -1,3 +1,4 @@
+# Create a dedicated namespace for networking-related services
 apiVersion: v1
 kind: Namespace
 metadata:

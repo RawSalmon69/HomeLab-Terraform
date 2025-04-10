@@ -1,11 +1,17 @@
+# Configuration for Pi-hole
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: pihole-config
   namespace: networking
 data:
-  TZ: "Asia/Bangkok"  # Change to your timezone
-  ServerIP: ""  # Will be automatically assigned
-  WEBPASSWORD: ""  # Will be set from secret
-  DNS1: "1.1.1.1"  # Cloudflare DNS
-  DNS2: "8.8.8.8"  # Google DNS
+  # Timezone setting
+  TZ: "Asia/Bangkok"
+  # Web interface password (change for production)
+  WEBPASSWORD: "pihole"
+  # Upstream DNS servers
+  DNS1: "1.1.1.1"
+  DNS2: "8.8.8.8"
+  # Server configuration
+  ServerIP: ""  # Will be auto-configured
+  DHCP_ACTIVE: "false"  # Disable DHCP server

@@ -1,15 +1,11 @@
-# Ingress for accessing the Pi-hole web interface
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: pihole-ingress
   namespace: networking
-  annotations:
-    # Disable SSL redirect if you don't have SSL configured
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: pihole.local  # Change to a domain you control or add to your hosts file
+  - host: pihole.local
     http:
       paths:
       - path: /
