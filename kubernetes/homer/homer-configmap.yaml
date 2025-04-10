@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homer-config
+  namespace: homer
+data:
+  config.yml: |-
+    ---
+    title: "DevOps Homelab"
+    subtitle: "Infrastructure Dashboard"
+    logo: "logo.png"
+    header: true
+    footer: 'DevOps Homelab Dashboard'
+    theme: default
+
+    # Services
+    services:
+      - name: "Infrastructure"
+        icon: "fas fa-server"
+        items:
+          - name: "Proxmox"
+            logo: "assets/tools/proxmox.png"
+            subtitle: "Virtualization Platform"
+            tag: "infra"
+            url: "https://proxmox.phanthawas.dev"
+            target: "_blank"
+          - name: "Grafana"
+            logo: "assets/tools/grafana.png"
+            subtitle: "Monitoring Dashboard"
+            tag: "monitoring"
+            url: "https://grafana.phanthawas.dev"
+            target: "_blank"
+          - name: "Prometheus"
+            logo: "assets/tools/prometheus.png"
+            subtitle: "Metrics Collection"
+            tag: "monitoring"
+            url: "#"
+            target: "_blank"
+
+      - name: "Networking"
+        icon: "fas fa-network-wired"
+        items:
+          - name: "Pi-hole"
+            logo: "assets/tools/pihole.png"
+            subtitle: "Network-wide Ad Blocking"
+            tag: "networking"
+            url: "https://pihole.phanthawas.dev/admin"
+            target: "_blank"
+
+      - name: "Applications"
+        icon: "fas fa-code"
+        items:
+          - name: "Portfolio"
+            logo: "assets/tools/web-programming.png"
+            subtitle: "Personal Portfolio Website"
+            tag: "app"
+            url: "https://portfolio.phanthawas.dev"
+            target: "_blank"
+
+  # Custom CSS
+  custom.css: |-
+    .hero.is-primary {
+      background-color: #141414 !important;
+    }
+    .card {
+      box-shadow: 0 2px 15px rgba(255, 0, 0, 0.1);
+      transition: all 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 20px rgba(255, 0, 0, 0.2);
+    }
